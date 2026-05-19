@@ -27,6 +27,29 @@ Lint the project
 ```bash
 npm run lint
 
-Notes
-This project uses React with Vite.
-If you add or update dependencies, rerun npm install.
+
+### Feature List
+  User login page with full name, email, and password inputs
+  Home dashboard with a welcome banner
+  Task statistics:
+    total tasks
+    in progress
+  completed
+    on hold
+Task filtering by status:
+  All
+  In Progress
+  Completed
+  Hold
+Task search input (UI present)
+Add new task page with:
+  task name
+  status selector
+  assigned-to field
+Client-side validation for required fields on add task
+Navigation between pages using React Router:
+  / → Login
+  /home → Home
+  /add-task → Add Task
+Responsive UI styling with separate CSS modules
+Uses a remote data source for initial task list (jsonplaceholder.typicode.com/todos)
