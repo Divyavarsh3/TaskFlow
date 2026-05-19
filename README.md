@@ -10,3 +10,23 @@ The Task Management Application is a React.js project used to manage daily tasks
 ### Install dependencies
 ```bash
 npm install
+
+Run the app locally
+```bash
+npm run dev
+
+Build for production
+```bash
+npm run build
+
+Preview the production build
+```bash
+npm run preview
+
+Lint the project
+```bash
+npm run lint
+
+Notes
+This project uses React with Vite.
+If you add or update dependencies, rerun npm install.
