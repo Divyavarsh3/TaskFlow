@@ -1,0 +1,167 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #070b16;
+}
+
+/* Full Page */
+
+.login-page {
+
+  height: 100vh;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  background: #070b16;
+}
+
+/* Login Box */
+
+.login-card {
+
+  width: 430px;
+
+  background: #161c2d;
+
+  padding: 45px;
+
+  border-radius: 25px;
+
+  border: 1px solid #5a5cff;
+}
+
+/* Logo */
+
+.logo-icon {
+
+  text-align: center;
+
+  font-size: 42px;
+
+  color: #6c63ff;
+
+  margin-bottom: 10px;
+}
+
+/* Heading */
+
+.login-card h1 {
+
+  color: white;
+
+  text-align: center;
+
+  font-size: 60px;
+
+  margin-top: 0;
+
+  margin-bottom: 15px;
+}
+
+/* Sub Text */
+
+.login-card p {
+
+  color: #8b8fa3;
+
+  text-align: center;
+
+  margin-bottom: 30px;
+
+  font-size: 18px;
+}
+
+/* Form */
+
+.login-card form {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 18px;
+}
+
+/* Labels */
+
+.login-card label {
+
+  color: #9ca3bd;
+
+  font-size: 14px;
+
+  letter-spacing: 1px;
+}
+
+/* Inputs */
+
+.login-card input {
+
+  padding: 18px;
+
+  border-radius: 12px;
+
+  border: 1px solid #353d58;
+
+  background: #1d2336;
+
+  color: white;
+
+  font-size: 16px;
+
+  outline: none;
+}
+
+.login-card input::placeholder {
+
+  color: #7d8297;
+}
+
+/* Button */
+
+.login-card button {
+
+  margin-top: 10px;
+
+  padding: 18px;
+
+  background: #6c63ff;
+
+  border: none;
+
+  border-radius: 12px;
+
+  color: white;
+
+  font-size: 28px;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.login-card button:hover {
+
+  background: #5a52f0;
+}
+
+/* Password Text */
+
+.password-text {
+
+  margin-top: 10px;
+
+  color: #7d8297;
+
+  font-size: 15px;
+
+  text-align: center;
+
+  line-height: 25px;
+}

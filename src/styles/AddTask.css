@@ -1,0 +1,124 @@
+.add-task-page {
+
+  min-height: 100vh;
+
+  background: #070b16;
+
+  color: white;
+
+  padding: 40px;
+}
+
+.add-task-container {
+
+  width: 50%;
+
+  margin: auto;
+
+  background: #161c2d;
+
+  padding: 40px;
+
+  border-radius: 20px;
+
+  border: 1px solid #2a324d;
+}
+
+.add-task-container h1 {
+
+  font-size: 42px;
+
+  margin-bottom: 10px;
+}
+
+.add-task-container p {
+
+  color: gray;
+
+  margin-bottom: 30px;
+}
+
+.add-task-container form {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 20px;
+}
+
+.add-task-container label {
+
+  font-weight: bold;
+}
+
+.add-task-container input,
+.add-task-container select {
+
+  padding: 15px;
+
+  border-radius: 10px;
+
+  border: 1px solid #2a324d;
+
+  background: #1d2336;
+
+  color: white;
+
+  outline: none;
+}
+
+.task-id-box {
+
+  background: #1d2336;
+
+  padding: 15px;
+
+  border-radius: 10px;
+
+  color: gray;
+}
+
+.task-id-box span {
+
+  color: #6c63ff;
+
+  font-weight: bold;
+}
+
+.button-group {
+
+  display: flex;
+
+  gap: 15px;
+}
+
+.add-btn {
+
+  background: #6c63ff;
+
+  color: white;
+
+  border: none;
+
+  padding: 12px 20px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+}
+
+.cancel-btn {
+
+  background: #2b3148;
+
+  color: white;
+
+  border: none;
+
+  padding: 12px 20px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+}

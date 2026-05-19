@@ -1,0 +1,33 @@
+.navbar {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 15px 25px;
+
+  background: #0d1220;
+
+  border-bottom: 1px solid #20263b;
+}
+
+.nav-links a {
+  color: white;
+
+  margin-right: 20px;
+
+  text-decoration: none;
+}
+
+.navbar button {
+  background: transparent;
+
+  border: 1px solid #434b67;
+
+  color: white;
+
+  padding: 10px 15px;
+
+  border-radius: 10px;
+}
