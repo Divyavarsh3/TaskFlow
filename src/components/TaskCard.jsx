@@ -19,6 +19,8 @@ function TaskCard({
       ...task,
     });
 
+  // Handle Change
+
   const handleChange = (e) => {
 
     setEditedTask({
@@ -31,6 +33,8 @@ function TaskCard({
     });
 
   };
+
+  // Save Task
 
   const handleSave = () => {
 
@@ -55,9 +59,23 @@ function TaskCard({
 
     setTasks(updatedTasks);
 
-    setFilteredTasks(
-      updatedTasks
+    // Update Local Storage
+
+    localStorage.setItem(
+
+      "tasks",
+
+      JSON.stringify(updatedTasks)
+
     );
+
+    if (setFilteredTasks) {
+
+      setFilteredTasks(
+        updatedTasks
+      );
+
+    }
 
     setIsEditing(false);
 
@@ -74,8 +92,12 @@ function TaskCard({
           <>
 
             <small>
+
               #{task.id}
+
             </small>
+
+            {/* Task Input */}
 
             <input
               type="text"
@@ -86,6 +108,8 @@ function TaskCard({
               }
               className="edit-input"
             />
+
+            {/* Status + Assign */}
 
             <div className="edit-row">
 
@@ -100,15 +124,21 @@ function TaskCard({
               >
 
                 <option>
+
                   In Progress
+
                 </option>
 
                 <option>
+
                   Completed
+
                 </option>
 
                 <option>
+
                   Hold
+
                 </option>
 
               </select>
@@ -116,7 +146,7 @@ function TaskCard({
               <input
                 type="text"
                 name="assignedTo"
-                placeholder="Assign User"
+                placeholder="Enter username"
                 value={
                   editedTask.assignedTo
                 }
@@ -127,6 +157,8 @@ function TaskCard({
 
             </div>
 
+            {/* Buttons */}
+
             <div className="task-buttons">
 
               <button
@@ -135,7 +167,9 @@ function TaskCard({
                   handleSave
                 }
               >
-                Save
+
+                ✔ Save
+
               </button>
 
               <button
@@ -146,7 +180,9 @@ function TaskCard({
                   )
                 }
               >
-                Cancel
+
+                ✖ Cancel
+
               </button>
 
             </div>
@@ -158,12 +194,20 @@ function TaskCard({
           <>
 
             <small>
+
               #{task.id}
+
             </small>
 
+            {/* Task Title */}
+
             <h3>
+
               {task.task}
+
             </h3>
+
+            {/* Task Info */}
 
             <div className="task-info">
 
@@ -175,17 +219,25 @@ function TaskCard({
 
               <span className="assigned">
 
-                {
+                👤 {
+
                   task.assignedTo
-                  ?
-                  task.assignedTo
-                  :
-                  "Unassigned"
+
+                    ?
+
+                    task.assignedTo
+
+                    :
+
+                    "Unassigned"
+
                 }
 
               </span>
 
             </div>
+
+            {/* Buttons */}
 
             <div className="task-buttons">
 
@@ -197,7 +249,9 @@ function TaskCard({
                   )
                 }
               >
-                Edit
+
+                ✏ Edit
+
               </button>
 
               <button
@@ -208,7 +262,9 @@ function TaskCard({
                   )
                 }
               >
-                Delete
+
+                🗑 Delete
+
               </button>
 
             </div>

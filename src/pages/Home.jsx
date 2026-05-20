@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import Navbar from "../components/Navbar";
 import TaskCard from "../components/TaskCard";
+import { UserContext } from "../context/UserContext";
 
 import "../styles/Home.css";
 
@@ -9,89 +10,157 @@ function Home() {
 
   const [tasks, setTasks] = useState([]);
 
-  const [filteredTasks, setFilteredTasks] =
-    useState([]);
+  const [search, setSearch] = useState("");
 
   const [activeFilter, setActiveFilter] =
-    useState("In Progress");
+    useState("All");
+
+  // Load Tasks
 
   useEffect(() => {
 
-    fetch(
-      "https://jsonplaceholder.typicode.com/todos"
-    )
-      .then((res) => res.json())
-      .then((data) => {
+    const savedTasks =
 
-        const updatedTasks = data
-          .slice(0, 8)
-          .map((item) => ({
-            id: item.id,
-            task: item.title,
-            status: item.completed
-              ? "Completed"
-              : "In Progress",
-            assignedTo: "",
-          }));
+      JSON.parse(
 
-        setTasks(updatedTasks);
+        localStorage.getItem("tasks")
 
-        const inProgressTasks =
-          updatedTasks.filter(
-            (task) =>
-              task.status ===
-              "In Progress"
-          );
+      );
 
-        setFilteredTasks(
-          inProgressTasks
-        );
-      });
+    if (savedTasks && savedTasks.length > 0) {
+
+      setTasks(savedTasks);
+
+    } else {
+
+      // Default Tasks
+
+      const defaultTasks = [
+
+        {
+          id: 1,
+          task: "boss",
+          status: "In Progress",
+          assignedTo: "deepak",
+        },
+
+        {
+          id: 2,
+          task: "fugiat veniam minus",
+          status: "In Progress",
+          assignedTo: "Unassigned",
+        },
+
+        {
+          id: 3,
+          task: "laboriosam mollitia",
+          status: "In Progress",
+          assignedTo: "Unassigned",
+        },
+
+        {
+          id: 4,
+          task: "qui ullam ratione",
+          status: "In Progress",
+          assignedTo: "Unassigned",
+        },
+
+        {
+          id: 5,
+          task: "illo expedita consequatur",
+          status: "In Progress",
+          assignedTo: "Unassigned",
+        },
+
+        {
+          id: 6,
+          task: "molestiae perspiciatis",
+          status: "In Progress",
+          assignedTo: "Unassigned",
+        },
+
+        {
+          id: 7,
+          task: "et doloremque nulla",
+          status: "In Progress",
+          assignedTo: "Unassigned",
+        },
+
+        {
+          id: 8,
+          task: "dolorum est consequatur",
+          status: "In Progress",
+          assignedTo: "Unassigned",
+        },
+
+      ];
+
+      setTasks(defaultTasks);
+
+      localStorage.setItem(
+
+        "tasks",
+
+        JSON.stringify(defaultTasks)
+
+      );
+
+    }
 
   }, []);
+
+  // Search + Filter
+
+  const filteredTasks = tasks.filter((task) => {
+
+    const matchesSearch =
+
+      task.task
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
+    const matchesFilter =
+
+      activeFilter === "All" ||
+
+      task.status === activeFilter;
+
+    return matchesSearch && matchesFilter;
+
+  });
+
+  // Filter Function
 
   const filterTasks = (status) => {
 
     setActiveFilter(status);
 
-    if (status === "All") {
-
-      setFilteredTasks(tasks);
-
-    } else {
-
-      const filtered = tasks.filter(
-        (task) =>
-          task.status === status
-      );
-
-      setFilteredTasks(filtered);
-    }
   };
+
+  // Delete Task
 
   const deleteTask = (id) => {
 
-    const updated = tasks.filter(
+    const updatedTasks = tasks.filter(
+
       (task) => task.id !== id
+
     );
 
-    setTasks(updated);
+    setTasks(updatedTasks);
 
-    if (activeFilter === "All") {
+    localStorage.setItem(
 
-      setFilteredTasks(updated);
+      "tasks",
 
-    } else {
+      JSON.stringify(updatedTasks)
 
-      const filtered = updated.filter(
-        (task) =>
-          task.status ===
-          activeFilter
-      );
+    );
 
-      setFilteredTasks(filtered);
-    }
   };
+
+  const { user } = useContext(UserContext);
+  const displayName = user?.name || "Divya";
 
   return (
 
@@ -99,33 +168,41 @@ function Home() {
 
       <Navbar />
 
+      {/* Welcome Banner */}
+
       <div className="welcome-banner">
 
         <h1>
+
           Welcome,
-          <span>
-            {" "}
-            Divya
-          </span>
-          👋
+          <span> {displayName}</span> 👋
+
         </h1>
 
         <p>
+
           to Task Manager
+
         </p>
 
       </div>
+
+      {/* Stats */}
 
       <div className="stats-container">
 
         <div className="stats-card">
 
           <h2>
+
             {tasks.length}
+
           </h2>
 
           <p>
+
             TOTAL TASKS
+
           </p>
 
         </div>
@@ -133,17 +210,24 @@ function Home() {
         <div className="stats-card progress">
 
           <h2>
+
             {
               tasks.filter(
+
                 (task) =>
+
                   task.status ===
                   "In Progress"
+
               ).length
             }
+
           </h2>
 
           <p>
+
             IN PROGRESS
+
           </p>
 
         </div>
@@ -151,17 +235,24 @@ function Home() {
         <div className="stats-card completed">
 
           <h2>
+
             {
               tasks.filter(
+
                 (task) =>
+
                   task.status ===
                   "Completed"
+
               ).length
             }
+
           </h2>
 
           <p>
+
             COMPLETED
+
           </p>
 
         </div>
@@ -169,22 +260,31 @@ function Home() {
         <div className="stats-card hold">
 
           <h2>
+
             {
               tasks.filter(
+
                 (task) =>
+
                   task.status ===
                   "Hold"
+
               ).length
             }
+
           </h2>
 
           <p>
+
             ON HOLD
+
           </p>
 
         </div>
 
       </div>
+
+      {/* Controls */}
 
       <div className="controls">
 
@@ -192,6 +292,10 @@ function Home() {
           type="text"
           placeholder="🔍 Search tasks or users..."
           className="search-bar"
+          value={search}
+          onChange={(e) =>
+            setSearch(e.target.value)
+          }
         />
 
         <div className="filter-buttons">
@@ -206,7 +310,9 @@ function Home() {
               filterTasks("All")
             }
           >
+
             All
+
           </button>
 
           <button
@@ -222,7 +328,9 @@ function Home() {
               )
             }
           >
+
             In Progress
+
           </button>
 
           <button
@@ -238,7 +346,9 @@ function Home() {
               )
             }
           >
+
             Completed
+
           </button>
 
           <button
@@ -251,37 +361,49 @@ function Home() {
               filterTasks("Hold")
             }
           >
+
             Hold
+
           </button>
 
         </div>
 
       </div>
 
+      {/* Task Grid */}
+
       <div className="task-grid">
 
-        {filteredTasks.map((task) => (
+        {filteredTasks.length > 0 ? (
 
-          <TaskCard
-            key={task.id}
-            task={task}
-            tasks={tasks}
-            setTasks={setTasks}
-            filteredTasks={
-              filteredTasks
-            }
-            setFilteredTasks={
-              setFilteredTasks
-            }
-            deleteTask={deleteTask}
-          />
+          filteredTasks.map((task) => (
 
-        ))}
+            <TaskCard
+              key={task.id}
+              task={task}
+              tasks={tasks}
+              setTasks={setTasks}
+              deleteTask={deleteTask}
+            />
+
+          ))
+
+        ) : (
+
+          <h2>
+
+            No Tasks Found
+
+          </h2>
+
+        )}
 
       </div>
 
     </div>
+
   );
+
 }
 
 export default Home;

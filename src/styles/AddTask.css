@@ -7,36 +7,58 @@
   color: white;
 
   padding: 40px;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
 }
+
+/* Container */
 
 .add-task-container {
 
   width: 50%;
 
-  margin: auto;
-
   background: #161c2d;
 
-  padding: 40px;
+  padding: 45px;
 
-  border-radius: 20px;
+  border-radius: 24px;
 
   border: 1px solid #2a324d;
+
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+
 }
+
+/* Heading */
 
 .add-task-container h1 {
 
   font-size: 42px;
 
   margin-bottom: 10px;
+
+  color: white;
+
 }
+
+/* Paragraph */
 
 .add-task-container p {
 
   color: gray;
 
   margin-bottom: 30px;
+
+  font-size: 17px;
+
 }
+
+/* Form */
 
 .add-task-container form {
 
@@ -45,19 +67,29 @@
   flex-direction: column;
 
   gap: 20px;
+
 }
+
+/* Labels */
 
 .add-task-container label {
 
   font-weight: bold;
+
+  font-size: 15px;
+
+  letter-spacing: 1px;
+
 }
+
+/* Inputs */
 
 .add-task-container input,
 .add-task-container select {
 
-  padding: 15px;
+  padding: 16px;
 
-  border-radius: 10px;
+  border-radius: 12px;
 
   border: 1px solid #2a324d;
 
@@ -66,17 +98,34 @@
   color: white;
 
   outline: none;
+
+  font-size: 16px;
+
+  transition: 0.3s;
+
 }
+
+.add-task-container input:focus,
+.add-task-container select:focus {
+
+  border: 1px solid #6c63ff;
+
+}
+
+/* Task ID */
 
 .task-id-box {
 
   background: #1d2336;
 
-  padding: 15px;
+  padding: 16px;
 
-  border-radius: 10px;
+  border-radius: 12px;
 
   color: gray;
+
+  font-size: 16px;
+
 }
 
 .task-id-box span {
@@ -84,14 +133,22 @@
   color: #6c63ff;
 
   font-weight: bold;
+
 }
+
+/* Buttons */
 
 .button-group {
 
   display: flex;
 
   gap: 15px;
+
+  margin-top: 10px;
+
 }
+
+/* Add Button */
 
 .add-btn {
 
@@ -101,12 +158,33 @@
 
   border: none;
 
-  padding: 12px 20px;
+  padding: 14px 24px;
 
-  border-radius: 10px;
+  border-radius: 12px;
 
   cursor: pointer;
+
+  font-weight: bold;
+
+  font-size: 15px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  transition: 0.3s;
+
 }
+
+.add-btn:hover {
+
+  background: #574dff;
+
+}
+
+/* Cancel Button */
 
 .cancel-btn {
 
@@ -116,9 +194,48 @@
 
   border: none;
 
-  padding: 12px 20px;
+  padding: 14px 24px;
 
-  border-radius: 10px;
+  border-radius: 12px;
 
   cursor: pointer;
+
+  font-weight: bold;
+
+  font-size: 15px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  transition: 0.3s;
+
+}
+
+.cancel-btn:hover {
+
+  background: #3b4565;
+
+}
+
+/* Responsive */
+
+@media screen and (max-width: 900px) {
+
+  .add-task-container {
+
+    width: 90%;
+
+    padding: 30px;
+
+  }
+
+  .button-group {
+
+    flex-direction: column;
+
+  }
+
 }
