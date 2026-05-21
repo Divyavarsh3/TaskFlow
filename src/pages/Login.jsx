@@ -3,6 +3,7 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { UserContext } from "../context/UserContext";
+import Validation from "../utils/validation";
 import "../styles/Login.css";
 
 function Login() {
@@ -24,33 +25,37 @@ function Login() {
   const handleChange = (e) => {
 
     const { name, value } = e.target;
+    let newValue = value;
 
-    // Full Name Validation
-
-    if (name === "name") {
-
-      if (!/^[A-Za-z\s]*$/.test(value)) {
-
-        alert(
-
-          "Name must contain letters only"
-
-        );
-
-        return;
-
-      }
-
+    if (name === "email") {
+      newValue = value.replace(/\s/g, "");
+    } else {
+      newValue = value.startsWith(" ") ? value.trimStart() : value;
     }
 
     setFormData({
 
       ...formData,
 
-      [name]: value,
+      [name]: newValue,
 
     });
 
+  };
+
+  const handleEmailKeyDown = (e) => {
+    if (e.key === " ") {
+      e.preventDefault();
+    }
+  };
+
+  const handleEmailPaste = (e) => {
+    const paste = e.clipboardData.getData("text");
+    if (paste.includes(" ")) {
+      e.preventDefault();
+      const cleaned = paste.replace(/\s/g, "");
+      document.execCommand("insertText", false, cleaned);
+    }
   };
 
   // Handle Submit
@@ -59,52 +64,11 @@ function Login() {
 
     e.preventDefault();
 
-    // Empty Validation
+    const validation = Validation.validateLoginForm(formData);
 
-    if (
-
-      !formData.name ||
-
-      !formData.email ||
-
-      !formData.password
-
-    ) {
-
-      alert(
-
-        "Please fill all fields"
-
-      );
-
+    if (!validation.isValid) {
+      alert(validation.message);
       return;
-
-    }
-
-    // Password Validation
-
-    const passwordRegex =
-
-      /^(?=.*[A-Z])(?=.*\d).{6,}$/;
-
-    if (
-
-      !passwordRegex.test(
-
-        formData.password
-
-      )
-
-    ) {
-
-      alert(
-
-        "Password must be minimum 6 characters with 1 uppercase letter and 1 number"
-
-      );
-
-      return;
-
     }
 
     setUser({
@@ -151,52 +115,42 @@ function Login() {
         <form onSubmit={handleSubmit}>
 
           {/* Full Name */}
-
-          <label>
-
-            FULL NAME
-
-          </label>
-
-          <input
-            type="text"
-            name="name"
-            placeholder="e.g. Divya"
-            value={formData.name}
-            onChange={handleChange}
-          />
+          <div className="form-group">
+            <label>FULL NAME</label>
+            <input
+              type="text"
+              name="name"
+              placeholder="e.g. Divya"
+              value={formData.name}
+              onChange={handleChange}
+            />
+          </div>
 
           {/* Email */}
-
-          <label>
-
-            EMAIL ADDRESS
-
-          </label>
-
-          <input
-            type="email"
-            name="email"
-            placeholder="you@example.com"
-            value={formData.email}
-            onChange={handleChange}
-          />
+          <div className="form-group">
+            <label>EMAIL ADDRESS</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="you@example.com"
+              value={formData.email}
+              onChange={handleChange}
+              onKeyDown={handleEmailKeyDown}
+              onPaste={handleEmailPaste}
+            />
+          </div>
 
           {/* Password */}
-
-          <label>
-
-            PASSWORD
-
-          </label>
-
-          <input
-            type="password"
-            name="password"
-            placeholder="Min 6 chars, 1 uppercase, 1 number"
-            value={formData.password}
-            onChange={handleChange}
-          />
+          <div className="form-group">
+            <label>PASSWORD</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="No spaces, min 6 chars, 1 uppercase, 1 number"
+              value={formData.password}
+              onChange={handleChange}
+            />
+          </div>
 
           {/* Button */}
 
@@ -210,7 +164,7 @@ function Login() {
 
           <p className="password-text">
 
-            Password must be 6+ characters with an uppercase letter and a number.
+            Password must be 6+ chars with uppercase and number.
 
           </p>
 

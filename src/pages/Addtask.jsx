@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
+import Validation from "../utils/validation";
+import TaskService from "../services/taskServices";
 
 import "../styles/AddTask.css";
 
@@ -18,18 +20,64 @@ function AddTask() {
 
   });
 
+  const [validationError, setValidationError] = useState("");
+
+  const [touchedFields, setTouchedFields] = useState({
+    task: false,
+    assignedTo: false,
+  });
+
   // Handle Input Change
 
   const handleChange = (e) => {
+
+    const { name, value } = e.target;
 
     setTaskData({
 
       ...taskData,
 
-      [e.target.name]: e.target.value,
+      [name]: value,
 
     });
 
+    // Mark field as touched
+    setTouchedFields({
+      ...touchedFields,
+      [name]: true,
+    });
+
+    // Clear main error when user starts typing
+    if (validationError) {
+      setValidationError("");
+    }
+
+  };
+
+  // Handle Field Blur (when user leaves the field)
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    setTouchedFields({
+      ...touchedFields,
+      [name]: true,
+    });
+  };
+
+  // Get real-time validation error for a field
+  const getFieldError = (fieldName) => {
+    if (!touchedFields[fieldName]) return "";
+    
+    if (fieldName === "task") {
+      const validation = Validation.validateTaskName(taskData.task);
+      return validation.isValid ? "" : validation.message;
+    }
+    
+    if (fieldName === "assignedTo") {
+      const validation = Validation.validateAssignedUser(taskData.assignedTo);
+      return validation.isValid ? "" : validation.message;
+    }
+    
+    return "";
   };
 
   // Handle Submit
@@ -38,20 +86,12 @@ function AddTask() {
 
     e.preventDefault();
 
-    // Validation
+    // Validate using Validation namespace
+    const validation = Validation.validateTaskForm(taskData);
 
-    if (
-
-      taskData.task.trim() === "" ||
-
-      taskData.assignedTo.trim() === ""
-
-    ) {
-
-      alert("Please fill all fields");
-
+    if (!validation.isValid) {
+      setValidationError(validation.message);
       return;
-
     }
 
     // New Task Object
@@ -67,6 +107,13 @@ function AddTask() {
       assignedTo: taskData.assignedTo,
 
     };
+
+    // Save to API (optional, for production APIs)
+    TaskService.createTask({
+      title: taskData.task,
+      completed: taskData.status === "Completed",
+      userId: 1,
+    }).catch(err => console.warn("API save failed (non-critical):", err));
 
     // Get Existing Tasks
 
@@ -106,6 +153,9 @@ function AddTask() {
 
     });
 
+    setValidationError("");
+    setTouchedFields({ task: false, assignedTo: false });
+
     // Redirect to Home Page
 
     navigate("/home");
@@ -144,6 +194,13 @@ function AddTask() {
 
           <form onSubmit={handleSubmit}>
 
+            {/* Validation Error Message */}
+            {validationError && (
+              <div className="error-message">
+                <p>❌ {validationError}</p>
+              </div>
+            )}
+
             {/* Task Name */}
 
             <label>
@@ -158,7 +215,12 @@ function AddTask() {
               placeholder="Describe the task..."
               value={taskData.task}
               onChange={handleChange}
+              onBlur={handleBlur}
+              className={getFieldError("task") ? "input-error" : ""}
             />
+            {getFieldError("task") && (
+              <small className="field-error">⚠️ {getFieldError("task")}</small>
+            )}
 
             {/* Status */}
 
@@ -208,7 +270,12 @@ function AddTask() {
               placeholder="Enter team member name"
               value={taskData.assignedTo}
               onChange={handleChange}
+              onBlur={handleBlur}
+              className={getFieldError("assignedTo") ? "input-error" : ""}
             />
+            {getFieldError("assignedTo") && (
+              <small className="field-error">⚠️ {getFieldError("assignedTo")}</small>
+            )}
 
             {/* Task ID */}
 

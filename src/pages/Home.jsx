@@ -2,7 +2,9 @@ import { useContext, useEffect, useState } from "react";
 
 import Navbar from "../components/Navbar";
 import TaskCard from "../components/TaskCard";
+import Loader from "../components/Loader";
 import { UserContext } from "../context/UserContext";
+import TaskService from "../services/taskServices";
 
 import "../styles/Home.css";
 
@@ -15,98 +17,45 @@ function Home() {
   const [activeFilter, setActiveFilter] =
     useState("All");
 
-  // Load Tasks
+  const [loading, setLoading] = useState(true);
 
+  const [error, setError] = useState(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const ITEMS_PER_PAGE = 9;
+
+  // Fetch Tasks using useEffect with API call
   useEffect(() => {
+    const loadTasks = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        // Fetch tasks from API (with 0.5 second delay built into the service)
+        const fetchedTasks = await TaskService.fetchTasks();
+        
+        // Get user-added tasks from localStorage (they have high IDs from Date.now())
+        const allLocalTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        const userAddedTasks = allLocalTasks.filter(task => task.id > 1000000);
+        
+        // Merge API tasks with user-added tasks
+        const mergedTasks = [...fetchedTasks, ...userAddedTasks];
+        
+        setTasks(mergedTasks);
+      } catch (err) {
+        // Handle API errors gracefully
+        console.error("Error loading tasks:", err);
+        setError(err.message || "Failed to load tasks. Using fallback data.");
+        
+        // Use fallback data from localStorage if API fails
+        const fallbackTasks = TaskService.getFallbackTasks();
+        setTasks(fallbackTasks);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    const savedTasks =
-
-      JSON.parse(
-
-        localStorage.getItem("tasks")
-
-      );
-
-    if (savedTasks && savedTasks.length > 0) {
-
-      setTasks(savedTasks);
-
-    } else {
-
-      // Default Tasks
-
-      const defaultTasks = [
-
-        {
-          id: 1,
-          task: "boss",
-          status: "In Progress",
-          assignedTo: "deepak",
-        },
-
-        {
-          id: 2,
-          task: "fugiat veniam minus",
-          status: "In Progress",
-          assignedTo: "Unassigned",
-        },
-
-        {
-          id: 3,
-          task: "laboriosam mollitia",
-          status: "In Progress",
-          assignedTo: "Unassigned",
-        },
-
-        {
-          id: 4,
-          task: "qui ullam ratione",
-          status: "In Progress",
-          assignedTo: "Unassigned",
-        },
-
-        {
-          id: 5,
-          task: "illo expedita consequatur",
-          status: "In Progress",
-          assignedTo: "Unassigned",
-        },
-
-        {
-          id: 6,
-          task: "molestiae perspiciatis",
-          status: "In Progress",
-          assignedTo: "Unassigned",
-        },
-
-        {
-          id: 7,
-          task: "et doloremque nulla",
-          status: "In Progress",
-          assignedTo: "Unassigned",
-        },
-
-        {
-          id: 8,
-          task: "dolorum est consequatur",
-          status: "In Progress",
-          assignedTo: "Unassigned",
-        },
-
-      ];
-
-      setTasks(defaultTasks);
-
-      localStorage.setItem(
-
-        "tasks",
-
-        JSON.stringify(defaultTasks)
-
-      );
-
-    }
-
+    loadTasks();
   }, []);
 
   // Search + Filter
@@ -134,6 +83,7 @@ function Home() {
   const filterTasks = (status) => {
 
     setActiveFilter(status);
+    setCurrentPage(1);
 
   };
 
@@ -293,9 +243,10 @@ function Home() {
           placeholder="🔍 Search tasks or users..."
           className="search-bar"
           value={search}
-          onChange={(e) =>
-            setSearch(e.target.value)
-          }
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setCurrentPage(1);
+          }}
         />
 
         <div className="filter-buttons">
@@ -372,33 +323,79 @@ function Home() {
 
       {/* Task Grid */}
 
-      <div className="task-grid">
+      {loading ? (
+        <Loader />
+      ) : error ? (
+        <div className="error-message">
+          <p>⚠️ {error}</p>
+          <p style={{ fontSize: "14px", marginTop: "10px" }}>
+            Showing cached or default tasks instead.
+          </p>
+        </div>
+      ) : null}
 
-        {filteredTasks.length > 0 ? (
+      {/* Pagination Logic */}
+      {filteredTasks.length > 0 && !loading && (
+        <>
+          <div className="task-grid">
+            {filteredTasks
+              .slice(
+                (currentPage - 1) * ITEMS_PER_PAGE,
+                currentPage * ITEMS_PER_PAGE
+              )
+              .map((task) => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  tasks={tasks}
+                  setTasks={setTasks}
+                  deleteTask={deleteTask}
+                />
+              ))}
+          </div>
 
-          filteredTasks.map((task) => (
+          {/* Pagination Buttons */}
+          {Math.ceil(filteredTasks.length / ITEMS_PER_PAGE) > 1 && (
+            <div className="pagination-container">
+              <button
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="pagination-btn"
+              >
+                ◀ Previous
+              </button>
 
-            <TaskCard
-              key={task.id}
-              task={task}
-              tasks={tasks}
-              setTasks={setTasks}
-              deleteTask={deleteTask}
-            />
+              <div className="pagination-info">
+                <span>
+                  Page {currentPage} of{" "}
+                  {Math.ceil(
+                    filteredTasks.length / ITEMS_PER_PAGE
+                  )}
+                </span>
+              </div>
 
-          ))
+              <button
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={
+                  currentPage ===
+                  Math.ceil(
+                    filteredTasks.length / ITEMS_PER_PAGE
+                  )
+                }
+                className="pagination-btn"
+              >
+                Next ▶
+              </button>
+            </div>
+          )}
+        </>
+      )}
 
-        ) : (
-
-          <h2>
-
-            No Tasks Found
-
-          </h2>
-
-        )}
-
-      </div>
+      {!loading && filteredTasks.length === 0 && (
+        <div className="task-grid">
+          <h2>No Tasks Found</h2>
+        </div>
+      )}
 
     </div>
 
